@@ -2,6 +2,8 @@ module github.com/steipete/sag
 
 go 1.25.0
 
+toolchain go1.27.2
+
 require (
 	github.com/ebitengine/oto/v3 v3.4.1
 	github.com/hajimehoshi/go-mp3 v0.3.4
