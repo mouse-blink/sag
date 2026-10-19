@@ -7,6 +7,10 @@ on:
         description: SemVer to release (without v)
         required: true
         type: string
+      dry_run:
+        description: Build and verify without publishing
+        type: boolean
+        default: false
 
 permissions: {}
 
@@ -18,9 +22,10 @@ jobs:
       contents: write
       pull-requests: write
       statuses: read
-    uses: openclaw/release-workflows/.github/workflows/release-go-cli.yml@f613cbfed2b043159c850c353e7facb8c89833b0 # v1.9.0
+    uses: openclaw/release-workflows/.github/workflows/release-go-cli.yml@584d24af4af8a80d52aad3177557340fc0deaf28 # v1
     with:
       version: ${{ inputs.version }}
+      dry-run: ${{ inputs.dry_run }}
       repository-type: personal
       homebrew-tap: steipete/homebrew-tap
       # The shared formula parser cannot preserve Linux-only ALSA dependencies.
@@ -40,6 +45,7 @@ jobs:
       ASC_PRIVATE_KEY_P8: ${{ secrets.ASC_PRIVATE_KEY }}
 
   homebrew:
+    if: ${{ !inputs.dry_run }}
     needs: release
     runs-on: ubuntu-latest
     timeout-minutes: 25

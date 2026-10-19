@@ -2,6 +2,10 @@
 
 ## 0.4.4 - Unreleased
 
+### Changed
+- Move macOS CI and release verification to macOS 27 runners while retaining the macOS 15 deployment target; add a release dry run that skips publication and Homebrew updates.
+- Build and test with Go 1.27.2 to fix reachable standard-library vulnerabilities while retaining the Go 1.25 source minimum.
+
 ## 0.4.3 - 2026-09-14
 
 ### Highlights
