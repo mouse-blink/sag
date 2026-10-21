@@ -1,6 +1,12 @@
 # Changelog
 
-## 0.4.4 - Unreleased
+## 0.4.4 - 2026-10-20
+
+### Highlights
+- Fix certificate validation vulnerability GO-2026-6809 in release binaries.
+
+### Fixed
+- Build with Go 1.27.3 to fix certificate validation vulnerability GO-2026-6809.
 
 ### Changed
 - Move macOS CI and release verification to macOS 27 runners while retaining the macOS 15 deployment target; add a release dry run that skips publication and Homebrew updates.
