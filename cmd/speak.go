@@ -581,12 +581,18 @@ func streamAndPlay(ctx context.Context, opts speakOptions, stream func(context.C
 		}()
 
 		playErr := player(ctx, pr)
+		// Stop both a blocked pipe write and an upstream read before joining the copy.
+		_ = pr.Close()
+		_ = resp.Close()
 		copyNVal := <-copyN
 		copyErrVal := <-copyErr
-		if copyErrVal != nil {
+		if playErr != nil {
+			return copyNVal, playErr
+		}
+		if copyErrVal != nil && (opts.outputPath != "" || !errors.Is(copyErrVal, io.ErrClosedPipe)) {
 			return copyNVal, copyErrVal
 		}
-		return copyNVal, playErr
+		return copyNVal, nil
 	}
 
 	mw := io.MultiWriter(writers...)
