@@ -1,5 +1,7 @@
 # Changelog
 
+## Unreleased
+
 ## 0.4.5 - 2026-10-23
 
 **Highlights:** Streamed playback stops upstream work promptly and preserves player and provider errors.
