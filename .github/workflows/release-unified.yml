@@ -36,6 +36,7 @@ jobs:
       archive-files: '["README.md","LICENSE"]'
       checksum-filename: SHA256SUMS
       strict-checks: true
+      require-signed-tag: true
       ci-check-events: '["push","pull_request"]'
     secrets:
       MACOS_SIGNING_P12: ${{ secrets.MACOS_SIGN_P12 }}
