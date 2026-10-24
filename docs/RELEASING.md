@@ -4,7 +4,7 @@ summary: 'Release checklist for sag (signed GitHub release + Homebrew tap)'
 
 # Releasing sag
 
-The manually dispatched `Release (unified)` workflow calls the shared [Go CLI archetype](https://github.com/openclaw/release-workflows) at v1.11.8, commit `fc49859568b3781af7663bee48c003fd987dc08b`. It freezes protected `main`, creates an annotated version tag, builds, Developer ID signs and notarizes macOS binaries, and publishes only after independent Apple Silicon and x86_64 verification. macOS jobs use Apple Silicon `xcode-27` runners; x86_64 verification runs under Rosetta. Pushing a tag alone does not start a release.
+The manually dispatched `Release (unified)` workflow calls the shared [Go CLI archetype](https://github.com/openclaw/release-workflows) at v1.11.8, commit `fc49859568b3781af7663bee48c003fd987dc08b`. It freezes protected `main`, verifies the fleet-signed annotated version tag, builds, Developer ID signs and notarizes macOS binaries, and publishes only after independent Apple Silicon and x86_64 verification. macOS jobs use Apple Silicon `xcode-27` runners; x86_64 verification runs under Rosetta. Pushing a tag alone does not start a release.
 
 To validate the current version from merged `main` without creating tags, releases, or Homebrew updates, dispatch `gh workflow run release-unified.yml --repo steipete/sag --ref main -f version=0.4.3 -F dry_run=true`. This still builds, signs, and verifies the release artifacts.
 
@@ -20,13 +20,13 @@ The caller uses `repository-type: personal`: `Developer ID Application: Peter St
 2. Update the version in `cmd/root.go` and `package.json`. Finalize the matching changelog section as `## X.Y.Z - YYYY-MM-DD`, including Highlights and all release changes.
 3. Run `pnpm check`, `pnpm docs:build`, `actionlint`, `goreleaser check`, `goreleaser check --config .goreleaser-linux-windows.yaml`, and `goreleaser release --snapshot --clean --skip=publish` on macOS. `scripts/check-release-metadata` checks the CLI, package manifest, and latest dated changelog. CI also builds the complete Linux/Windows matrix on Ubuntu.
 4. Review and merge the release PR, then wait for all CI on the exact merged commit. Recheck that the proposed tag and release do not already exist.
-5. Dispatch from the current default-branch head, using the version without `v`:
+5. Require a successful dry run on that exact merged commit. Sign an annotated tag at the same commit with the fleet release key, verify it with `git -c gpg.format=ssh -c gpg.ssh.allowedSignersFile=.github/release-allowed-signers verify-tag <tag>`, and push it only if verification succeeds. Dispatch from the current default-branch head, using the version without `v`:
 
    ```sh
    gh workflow run release-unified.yml --repo steipete/sag --ref main -f version=X.Y.Z
    ```
 
-6. Watch that exact run through publication, Homebrew handoff, and closeout. The workflow owns annotated tag creation; never move or replace a release tag. If a job fails, repair the cause and rerun the failed jobs. A retry uses the existing frozen tag even if `main` has advanced.
+6. Watch that exact run through publication, Homebrew handoff, and closeout. The workflow requires and reuses the signed annotated tag; never move or replace a release tag. If a job fails, repair the cause and rerun the failed jobs. A retry uses the existing frozen tag even if `main` has advanced.
 
 ## Build and artifact contracts
 

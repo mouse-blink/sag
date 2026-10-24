@@ -1,6 +1,8 @@
 # Changelog
 
-## 0.4.5 - Unreleased
+## 0.4.5 - 2026-10-23
+
+**Highlights:** Streamed playback stops upstream work promptly and preserves player and provider errors.
 
 ### Fixed
 - Stop upstream reads and pipe writes when streamed playback ends early, return player failures, reject interrupted output saves, and preserve provider read errors. Thanks @SebTardif (#35).
